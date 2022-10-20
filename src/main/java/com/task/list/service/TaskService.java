@@ -1,5 +1,7 @@
 package com.task.list.service;
 
+import com.task.list.entity.EnumPriority;
+import com.task.list.entity.EnumStatus;
 import com.task.list.entity.Task;
 import com.task.list.entity.mapper.TaskMapper;
 import com.task.list.exception.RequestException;
@@ -19,14 +21,15 @@ public class TaskService {
     @Autowired
     private TaskRepository repository;
 
-    public TaskResponse registerTask(TaskForm taskForm) {
+    public TaskResponse registerTask(String description, EnumStatus status, EnumPriority priority) {
         try {
+            TaskForm taskForm = new TaskForm(description, status, priority);
             Task task = TaskMapper.fromFormToEntity(taskForm);
             return TaskResponseMapper.fromEntityToResponse(repository.save(task));
         } catch (Exception e) {
             log.error("Error when registering new task.");
-            e.printStackTrace();
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Error when registering new task.");
+            throw e;
+//            throw new RequestException(HttpStatus.BAD_REQUEST, "Error when registering new task.");
         }
     }
 }

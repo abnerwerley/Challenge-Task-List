@@ -10,7 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskForm {
-    private Long id;
     private String description;
     private EnumStatus status;
     private EnumPriority priority;

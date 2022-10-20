@@ -14,9 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -39,14 +37,13 @@ class TaskServiceTest {
     @Test
     void testRegisterTask() {
         doReturn(getTask()).when(repository).save(TaskMapper.fromFormToEntity(getTaskForm()));
-        TaskResponse registering = service.registerTask(getTaskForm());
+        TaskResponse registering = service.registerTask(DESCRIPTION, STATUS, PRIORITY);
         assertNotNull(registering);
         verify(repository).save(TaskMapper.fromFormToEntity(getTaskForm()));
     }
 
     private TaskForm getTaskForm() {
         return TaskForm.builder()
-                .id(ID)
                 .description(DESCRIPTION)
                 .status(STATUS)
                 .priority(PRIORITY)

@@ -23,12 +23,10 @@ public class Task {
     private String description;
 
     @Column(updatable = false)
-//    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDate createdAt;
 
-    @NotBlank(message = "Status must no be blank.")
     private EnumStatus status;
 
-    @NotBlank(message = "Priority must no be blank.")
     private EnumPriority priority;
+
 }

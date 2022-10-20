@@ -1,7 +1,7 @@
-package com.task.list;
+package com.task.list.controller;
 
-import com.task.list.entity.Task;
-import com.task.list.json.TaskForm;
+import com.task.list.entity.EnumPriority;
+import com.task.list.entity.EnumStatus;
 import com.task.list.json.TaskResponse;
 import com.task.list.service.TaskService;
 import lombok.AllArgsConstructor;
@@ -18,8 +18,10 @@ public class TaskController {
     private TaskService service;
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("")
-    TaskResponse registerTask(@RequestBody TaskForm form) {
-        return service.registerTask(form);
+    @PostMapping("")
+    TaskResponse registerTask(@RequestParam String description,
+                              @RequestParam(defaultValue = "PENDING") EnumStatus status,
+                              @RequestParam(defaultValue = "LOW") EnumPriority priority) {
+        return service.registerTask(description, status, priority);
     }
 }
