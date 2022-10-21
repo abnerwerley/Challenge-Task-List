@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -35,16 +36,16 @@ public class TaskService {
             return TaskResponseMapper.fromEntityToResponse(repository.save(task));
         } catch (Exception e) {
             log.error("Error when registering new task.");
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Error when registering new task. " + e.getMessage());
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Error when registering new task ");
         }
     }
 
-    public TaskResponse updateTaskStatus(Long id, EnumStatus status) {
+    public TaskResponse updateTaskStatusToDone(Long id) {
         try {
             Optional<Task> taskOptional = repository.findById(id);
             if (taskOptional.isPresent()) {
                 Task task = taskOptional.get();
-                task.setStatus(status);
+                task.setStatus(EnumStatus.DONE);
                 repository.save(task);
                 return TaskResponseMapper.fromEntityToResponse(task);
             }
@@ -54,7 +55,7 @@ public class TaskService {
             throw new ResourceNotFoundException(TASK_NOT_FOUND_MESSAGE);
         } catch (Exception e) {
             log.error("Error updating task's status.");
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Error updating task's status. " + e.getMessage());
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Error updating task's status.");
         }
     }
 
@@ -71,7 +72,25 @@ public class TaskService {
             throw new ResourceNotFoundException(TASK_NOT_FOUND_MESSAGE);
         } catch (Exception e) {
             log.error("Error deleting task.");
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Error deleting task. " + e.getMessage());
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Error deleting task.");
+        }
+    }
+
+    public Stream<TaskResponse> getAllTaskButDoneOnes() {
+        try {
+            return repository.findAllTasksButDoneOnes().stream().map(TaskResponseMapper::fromEntityToResponse);
+        } catch (Exception exception) {
+            log.error("Error getting all tasks but done ones. ");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Error getting all tasks but done ones.");
+        }
+    }
+
+    public Stream<TaskResponse> getAllTasks() {
+        try {
+            return repository.findAll().stream().map(TaskResponseMapper::fromEntityToResponse);
+        } catch (Exception exception) {
+            log.error("Error getting all tasks.");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Error getting all tasks.");
         }
     }
 }

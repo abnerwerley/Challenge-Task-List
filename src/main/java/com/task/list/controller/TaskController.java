@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Stream;
+
 @RestController
 @RequestMapping("/task")
 @AllArgsConstructor
@@ -27,9 +29,8 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/status")
-    TaskResponse updateTaskStatus(@RequestParam Long id,
-                                  @RequestParam EnumStatus status) {
-        return service.updateTaskStatus(id, status);
+    TaskResponse updateTaskStatusToDone(@RequestParam Long id) {
+        return service.updateTaskStatusToDone(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -38,4 +39,9 @@ public class TaskController {
         service.deleteTask(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/tasks_not_done")
+    Stream<TaskResponse> getAllTasksButDoneOnes() {
+        return service.getAllTaskButDoneOnes();
+    }
 }

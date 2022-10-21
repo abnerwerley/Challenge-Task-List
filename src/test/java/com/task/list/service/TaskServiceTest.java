@@ -17,7 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +36,6 @@ class TaskServiceTest {
 
     public static final EnumPriority PRIORITY = EnumPriority.LOW;
 
-    public static final EnumStatus STATUS_TO_UPDATE_TO = EnumStatus.DONE;
     @Mock
     private TaskRepository repository;
 
@@ -63,23 +64,23 @@ class TaskServiceTest {
     @Test
     void testUpdateTaskStatus() {
         doReturn(getTaskOptional()).when(repository).findById(ID);
-        TaskResponse updating = service.updateTaskStatus(ID, STATUS_TO_UPDATE_TO);
-        assertEquals(STATUS_TO_UPDATE_TO, updating.getStatus());
+        TaskResponse updating = service.updateTaskStatusToDone(ID);
+        assertEquals(EnumStatus.DONE, updating.getStatus());
         verify(repository).findById(ID);
     }
 
     @Test
     void testUpdateTaskStatusWithUnexistentId() {
         doThrow(ResourceNotFoundException.class).when(repository).findById(ID);
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> service.updateTaskStatus(ID, STATUS));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> service.updateTaskStatusToDone(ID));
         assertEquals("Task not found.", exception.getMessage());
     }
 
     @Test
     void testUpdateTaskStatusException() {
         doThrow(RequestException.class).when(repository).findById(ID);
-        Exception exception = assertThrows(RequestException.class, () -> service.updateTaskStatus(ID, STATUS));
-        assertEquals("Error updating task's status. null", exception.getMessage());
+        Exception exception = assertThrows(RequestException.class, () -> service.updateTaskStatusToDone(ID));
+        assertEquals("Error updating task's status.", exception.getMessage());
     }
 
     @Test
@@ -100,7 +101,35 @@ class TaskServiceTest {
     void testDeleteTaskException() {
         doThrow(RequestException.class).when(repository).findById(ID);
         Exception exception = assertThrows(RequestException.class, () -> service.deleteTask(ID));
-        assertEquals("Error deleting task. null", exception.getMessage());
+        assertEquals("Error deleting task.", exception.getMessage());
+    }
+
+    @Test
+    void testGetAllTasksButDoneOnes() {
+        doReturn(getTaskList()).when(repository).findAllTasksButDoneOnes();
+        Stream<TaskResponse> tasks = service.getAllTaskButDoneOnes();
+        assertNotNull(tasks);
+    }
+
+    @Test
+    void testGetAllTasksButDoneOnesException() {
+        doThrow(RequestException.class).when(repository).findAllTasksButDoneOnes();
+        Exception exception = assertThrows(RequestException.class, () -> service.getAllTaskButDoneOnes());
+        assertEquals("Error getting all tasks but done ones.", exception.getMessage());
+    }
+
+    @Test
+    void testGetAllTasks(){
+        doReturn(getTaskList()).when(repository).findAll();
+        Stream<TaskResponse> tasks = service.getAllTasks();
+        assertNotNull(tasks);
+    }
+
+    @Test
+    void testGetAllTasksException() {
+        doThrow(RequestException.class).when(repository).findAll();
+        Exception exception = assertThrows(RequestException.class, () -> service.getAllTasks());
+        assertEquals( "Error getting all tasks.", exception.getMessage());
     }
 
     private TaskForm getTaskForm() {
@@ -137,5 +166,9 @@ class TaskServiceTest {
                 .status(STATUS)
                 .priority(PRIORITY)
                 .build());
+    }
+
+    private List<Task> getTaskList() {
+        return List.of(Task.builder().build());
     }
 }
