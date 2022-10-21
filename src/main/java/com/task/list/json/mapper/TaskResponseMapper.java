@@ -14,4 +14,6 @@ public class TaskResponseMapper {
                 .createdAt(task.getCreatedAt())
                 .build();
     }
+
+    private TaskResponseMapper(){}
 }

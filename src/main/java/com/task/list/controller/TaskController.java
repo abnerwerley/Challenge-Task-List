@@ -24,4 +24,18 @@ public class TaskController {
                               @RequestParam(defaultValue = "LOW") EnumPriority priority) {
         return service.registerTask(description, status, priority);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/status")
+    TaskResponse updateTaskStatus(@RequestParam Long id,
+                                  @RequestParam EnumStatus status) {
+        return service.updateTaskStatus(id, status);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    void deleteTask(@PathVariable Long id) {
+        service.deleteTask(id);
+    }
+
 }
